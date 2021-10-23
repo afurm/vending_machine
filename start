@@ -1,0 +1,62 @@
+require 'thor'
+require 'json'
+require_relative 'product/basic'
+require_relative 'product/fanta'
+require_relative 'product/factory'
+require_relative 'product/sprite'
+require_relative 'product/orange_juice'
+require_relative 'product/water'
+require_relative 'product/coca_cola'
+require 'pry'
+
+class Start < Thor
+  desc "init", "Initialize products."
+  def init
+    product_obj = { products: [] }
+    Product::Factory.add(Product::Fanta.new, 3)
+    Product::Factory.add(Product::CocaCola.new, 2)
+    Product::Factory.add(Product::OrangeJuice.new, 1)
+    Product::Factory.add(Product::Sprite.new, 2)
+    Product::Factory.add(Product::Water.new, 0)
+
+    p "Name   price   count"
+    %w(Fanta CocaCola OrangeJuice Sprite Water).each do |product|
+      prod = Object.const_get("Product::#{product}")
+      p "#{prod::NAME} => #{prod::PRICE} => #{prod.count}"
+      product_obj[:products] << { name: prod::NAME, count: prod.count, price: prod::PRICE }
+    end
+
+    File.open("products.json","w") do |f|
+      f.write(product_obj.to_json)
+    end
+  end
+
+  desc "buy", "Chose product you want to buy"
+  def buy(name, amount)
+    product_to_buy = '';
+    product_obj = JSON.parse(File.read("products.json"))
+    
+    product_obj["products"].each do |item|
+      if item["name"] === name && item["count"] > 0
+        p "Found product #{name}"
+
+        if item["price"] <= amount.to_f
+          product_to_buy = item
+          item["count"]-=1
+        else
+          p "Price is bigger than you insert"
+        end
+      end
+    end
+    
+    return "Product cannot be found" if product_to_buy.empty?
+
+    File.open("products.json","w") do |f|
+      f.write(product_obj.to_json)
+    end
+
+    p "Here you go #{product_to_buy["name"]}! Enjoy"
+  end
+end
+
+Start.start(ARGV)
