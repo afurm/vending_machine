@@ -21,7 +21,7 @@ module Manager
       end
       item
     end
-
+    
     return [product_to_buy, updated_products]
   end
 end

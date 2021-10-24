@@ -1,16 +1,8 @@
 require 'thor'
 require 'json'
 require_relative 'product/basic'
-require_relative 'product/fanta'
-require_relative 'product/factory'
-require_relative 'product/sprite'
-require_relative 'product/orange_juice'
-require_relative 'product/water'
-require_relative 'product/coca_cola'
-require_relative 'cli/file_operation'
-require_relative 'cli/messages'
-require_relative 'cli/manager'
-require 'pry'
+Dir[File.join(__dir__, 'product', '*.rb')].each { |file| require file }
+Dir[File.join(__dir__, 'cli', '*.rb')].each { |file| require file }
 
 class Start < Thor
   include FileOperation

@@ -1,3 +1,5 @@
+require 'json'
+
 module FileOperation
   def write(product_obj)
     File.open("products.json","w") do |f|
