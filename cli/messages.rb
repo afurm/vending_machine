@@ -17,10 +17,10 @@ module Messages
   end
 
   def cannot_find
-    "Product cannot be found"
+    p "Product cannot be found"
   end
 
-  def success(product_to_buy)
-    p "Here you go #{product_to_buy["name"]}! Enjoy"
+  def success(product_to_buy, change)
+    p "Here you go #{product_to_buy["name"]} (change -> #{change})! Enjoy"
   end
 end

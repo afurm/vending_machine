@@ -11,7 +11,12 @@ class Start < Thor
   
   desc "init", "Initialize products."
   def init
-    product_obj = []
+    product_obj = { products: [], coins: [{ "value": 5.00, "count": 5 },
+                                          { "value": 3.00, "count": 5 },
+                                          { "value": 2.00, "count": 5 },
+                                          { "value": 1.00, "count": 5 },
+                                          { "value": 0.50, "count": 5 },
+                                          { "value": 0.25, "count": 5 }]}
     Product::Factory.add(Product::Fanta.new, 3)
     Product::Factory.add(Product::CocaCola.new, 2)
     Product::Factory.add(Product::OrangeJuice.new, 1)
@@ -19,7 +24,7 @@ class Start < Thor
     Product::Factory.add(Product::Water.new, 0)
 
     print_list_of_products do |product|
-      product_obj << { name: product::NAME, count: product.count, price: product::PRICE }
+      product_obj[:products] << { name: product::NAME, count: product.count, price: product::PRICE }
     end
 
     write(product_obj)
@@ -27,10 +32,10 @@ class Start < Thor
 
   desc "buy", "Chose product you want to buy"
   def buy(name, amount)
-    product_to_buy, updated_products = find_product(name, amount) 
+    product_to_buy, change ,updated_products, updated_coins = find_product(name, amount) 
     return cannot_find if product_to_buy.empty?
-    write(updated_products)
-    success(product_to_buy)
+    write({ products: updated_products, coins: updated_coins })
+    success(product_to_buy, change)
   end
 end
 

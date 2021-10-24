@@ -16,6 +16,6 @@ describe Messages do
   end
 
   it 'should print success message' do
-    expect(instance.success({"name"=>"Fanta", "count"=>1, "price"=>2.7})).to eq("Here you go Fanta! Enjoy")
+    expect(instance.success({"name"=>"Fanta", "count"=>1, "price"=>2.7}, 0.0)).to eq("Here you go Fanta (change -> 0.0)! Enjoy")
   end
 end
