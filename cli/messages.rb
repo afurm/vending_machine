@@ -1,10 +1,10 @@
 module Messages
   def print_list_of_products(&block)
     p "Name   price   count"
-    %w(Fanta CocaCola OrangeJuice Sprite Water).each do |product|
-      prod = Object.const_get("Product::#{product}")
-      p "#{prod::NAME} => #{prod::PRICE} => #{prod.count}"
-      block.call(prod)
+
+    Product::Factory.items.each do |key, value|
+      p "#{key} => #{value.first&.price} => #{value.count}"
+      block.call({ name: key, value: value})
     end
   end
 

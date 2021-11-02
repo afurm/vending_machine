@@ -1,6 +1,6 @@
 require 'thor'
 require 'json'
-require_relative 'product/basic'
+require_relative 'product/Factory'
 Dir[File.join(__dir__, 'product', '*.rb')].each { |file| require file }
 Dir[File.join(__dir__, 'cli', '*.rb')].each { |file| require file }
 
@@ -11,20 +11,23 @@ class Start < Thor
   
   desc "init", "Initialize products."
   def init
-    product_obj = { products: [], coins: [{ "value": 5.00, "count": 5 },
+    product_obj = { products: {}, coins: [{ "value": 5.00, "count": 5 },
                                           { "value": 3.00, "count": 5 },
                                           { "value": 2.00, "count": 5 },
                                           { "value": 1.00, "count": 5 },
                                           { "value": 0.50, "count": 5 },
                                           { "value": 0.25, "count": 5 }]}
-    Product::Factory.add(Product::Fanta.new, 3)
-    Product::Factory.add(Product::CocaCola.new, 2)
-    Product::Factory.add(Product::OrangeJuice.new, 1)
-    Product::Factory.add(Product::Sprite.new, 2)
-    Product::Factory.add(Product::Water.new, 0)
+  
+    Product::Factory.build_coca_cola(2)
+    Product::Factory.build_fanta(3)
+    Product::Factory.build_orange_juice(1)
+    Product::Factory.build_sprite(2)
+    Product::Factory.build_water(0)
 
     print_list_of_products do |product|
-      product_obj[:products] << { name: product::NAME, count: product.count, price: product::PRICE }
+      product[:value].each do |v|
+        product_obj[:products][product[:name]] = { count: product[:value].size, price: v.price }
+      end
     end
 
     write(product_obj)
@@ -32,7 +35,7 @@ class Start < Thor
 
   desc "buy", "Chose product you want to buy"
   def buy(name, amount)
-    product_to_buy, change ,updated_products, updated_coins = find_product(name, amount) 
+    product_to_buy, change, updated_products, updated_coins = find_product(name, amount) 
     return cannot_find if product_to_buy.empty?
     write({ products: updated_products, coins: updated_coins })
     success(product_to_buy, change)
